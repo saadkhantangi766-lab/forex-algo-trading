@@ -1,0 +1,88 @@
+# Global Configuration for Forex Trading System
+
+trading:
+  mode: paper  # paper, backtest, live
+  broker: oanda  # oanda, alpaca, interactive_brokers
+  leverage: 10
+  risk_per_trade: 0.02  # 2% risk per trade
+  max_position_size: 100000
+  max_daily_loss: 0.05  # 5% daily loss limit
+  
+instruments:
+  primary:
+    - EURUSD
+    - GBPUSD
+    - GOLD  # XAU/USD
+    - USDJPY
+    - AUDUSD
+  
+  timeframes:
+    - 5m
+    - 15m
+    - 1h
+    - 4h
+    - 1d
+
+strategy:
+  name: MultiLevelAlgo
+  enabled: true
+  
+  # Risk Management
+  risk_management:
+    stop_loss_pips: 50
+    take_profit_ratio: 2.0  # TP is 2x the SL
+    trailing_stop: true
+    trailing_stop_pips: 30
+  
+  # Entry Signals
+  entry_signals:
+    - macd_crossover
+    - rsi_extreme
+    - moving_average_cross
+    - bollinger_band_breakout
+    - volume_profile
+  
+  # ML Model
+  ml_model:
+    type: ensemble
+    models:
+      - xgboost
+      - lightgbm
+      - lstm
+    prediction_horizon: 60  # minutes
+    confidence_threshold: 0.65
+
+data:
+  sources:
+    - oanda
+    - polygon_io
+    - alpha_vantage
+  
+  cache:
+    enabled: true
+    ttl: 300  # seconds
+    backend: redis
+  
+  storage:
+    type: postgresql
+    retention_days: 365
+
+backtest:
+  start_date: "2020-01-01"
+  end_date: "2024-12-31"
+  initial_capital: 100000
+  commission: 0.0002
+  slippage: 0.0005
+
+notifications:
+  enabled: true
+  channels:
+    - slack
+    - email
+    - webhook
+  events:
+    - trade_opened
+    - trade_closed
+    - stop_loss_hit
+    - take_profit_hit
+    - daily_summary
